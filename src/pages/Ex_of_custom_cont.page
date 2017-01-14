@@ -1,0 +1,15 @@
+<apex:page controller="table">
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!acc}" var="ac">
+            <apex:column headerValue="Name" value="{!ac.name}"/>
+            <apex:column value="{!ac.type}"/>
+            <apex:column value="{!ac.phone}"/>
+        </apex:pageBlockTable>
+        
+        <apex:pageBlockTable value="{!opp}" var="opt">
+        <apex:column value="{!opt.Name}"/>
+        <apex:column value="{!opt.StageName}"/>
+        <apex:column value="{!opt.type}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock> 
+</apex:page>

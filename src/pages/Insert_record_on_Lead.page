@@ -1,0 +1,18 @@
+<apex:page standardController="Lead" extensions="Leadextn">
+  <apex:form >
+      <apex:pageblock >
+          <apex:pageblockButtons >
+              <apex:commandButton value="Save" action="{!Save}"/>
+              <apex:commandButton value="Cancel" action="{!Cancel}"/>
+          </apex:pageblockButtons>
+          
+          <apex:pageBlockSection >
+               <apex:inputField value="{!Lead.Salutation}"/>
+               <apex:inputField value="{!Lead.LastName }"/>
+               <apex:inputField value="{!Lead.Company}"/>
+               <apex:inputField value="{!Lead.Status}"/>
+               <apex:inputField value="{!Lead.Email}"/>
+          </apex:pageBlockSection>
+      </apex:pageblock>
+  </apex:form>
+</apex:page>

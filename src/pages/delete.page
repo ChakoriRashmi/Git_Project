@@ -1,0 +1,13 @@
+<apex:page standardController="Opportunity" showHeader="false" sidebar="false">
+<apex:form >
+<apex:inputField value="{!Opportunity.StageName}" taborderhint="3"/>
+<apex:inputField value="{!Opportunity.Contact__c}" taborderhint="1"/>
+<apex:outputText value="{!Opportunity.Name+ ' ' +Opportunity.Name}"/>
+<apex:outputLabel value="stage"/>
+<apex:outputField value="{!Opportunity.StageName}"/><br/>
+<apex:outputField value="{!Opportunity.Contact__c}" html-tabindex="20"/>
+
+<apex:inputText style=" position: absolute;left: 1200px;"/>
+
+</apex:form>
+</apex:page>

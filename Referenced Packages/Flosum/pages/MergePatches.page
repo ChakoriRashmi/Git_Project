@@ -1,0 +1,86 @@
+<apex:page standardController="Flosum__Patch__c" recordSetVar="var" extensions="Flosum.MergePatchesExtension" action="{!mergeAction}" sidebar="false">
+	<c:Wait />
+	<style>
+		div .pagination {
+			text-align: center;
+		}
+		td .dataCell label {
+		font-weight: normal;
+		}
+		span.paginationEle {
+		margin-left: 4px;
+		}
+		.pagination input {
+		margin-left: 4px;
+		} 
+		body .searchRow {
+		  margin-left: 1%;
+		}
+		body .searchRowLast {
+		  margin-left: .5%;
+		}
+		span.duplicateHeaderCell{
+			margin-left: 2%;
+		}
+	</style>
+	<apex:form >
+		<apex:pagemessages id="msg"/>
+		<apex:pageBlock title="Merge Patches">
+			<apex:pageBlockButtons >
+		        <apex:commandButton value="Add To Patch" action="{!addToPatch}" rendered="{!If(isValid,true,false)}" oncomplete="hide();" rerender="msg" onclick="show();"/>
+			</apex:pageBlockButtons>
+			<apex:pageBlocksection rendered="{!If(isValid,true,false)}" columns="1">
+				<apex:pageblocksectionitem >
+					<apex:outputLabel value="Patch Name :" />	
+					<apex:inputText value="{!patchName}" />
+				</apex:pageblocksectionitem>
+				<apex:outputPanel rendered="{!If(conflictList.size > 0,true,false)}">
+					<p>{!$Label.flosum__Merge_Patches_Description}</p>
+				</apex:outputPanel>
+			</apex:pageBlocksection>
+			<apex:pageBlocksection rendered="{!If(isValid,true,false)}" columns="1" id="conflictBlock">
+				<apex:actionFunction action="{!refreshStats}" onComplete="hide();" reRender="conflictBlock,msg" name="changeItem">
+					<apex:param assignTo="{!compId}" value="" name="componentHistoryId"/>
+				</apex:actionFunction>
+			    <apex:repeat value="{!conflictList}" var="item" rendered="{!If(conflictList.size > 0,true,false)}">
+			        <apex:outputPanel >
+			        	<apex:outputText value="{!item.componentName}"/>
+			        	<apex:outputText value="{!item.componentType}" styleClass="duplicateHeaderCell"/>
+			        </apex:outputPanel>
+			        <apex:pageblocksectionitem >
+				    	<apex:outputPanel >
+					    	<apex:pageblockTable value="{!item.duplicateMap}" var="ditem">
+					    		<apex:column headerValue="Source Patch">
+					    			<apex:outputPanel rendered="{!item.duplicateMap[ditem].checked}">
+					    				<input type="radio" name="{!item.componentType+'#'+item.componentName}" checked="checked" onChange="show();changeItem('{!item.duplicateMap[ditem].mani.Id}');">
+					    					{!item.duplicateMap[ditem].mani.Patch__r.Name}
+					    				</input>
+					    			</apex:outputPanel>
+					    			<apex:outputPanel rendered="{!!item.duplicateMap[ditem].checked}">
+					    				<input type="radio" name="{!item.componentType+'#'+item.componentName}" onChange="show();changeItem('{!item.duplicateMap[ditem].mani.Id}');">
+					    					{!item.duplicateMap[ditem].mani.Patch__r.Name}
+					    				</input>
+					    			</apex:outputPanel>
+					    		</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Version}">{!item.duplicateMap[ditem].mani.Version__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Developer}">{!item.duplicateMap[ditem].mani.Developer__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Changed_On}">{!item.duplicateMap[ditem].mani.Last_Updated_On__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Committed_By}">{!item.duplicateMap[ditem].mani.Component_History__r.Committed_By__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Committed_On}">{!item.duplicateMap[ditem].mani.Component_History__r.Committed_On__c}</apex:column>
+					    		<apex:column headerValue="{!$ObjectType.Flosum__Patch_Manifest__c.fields.Flosum__Source_Name__c.Label}">{!item.duplicateMap[ditem].mani.Source_Name__c}</apex:column>
+					    		<apex:column headerValue="Source Name">{!item.duplicateMap[ditem].mani.Parent_Name__c}</apex:column>
+					    	</apex:pageblockTable>
+				    	</apex:outputPanel>
+				    </apex:pageblocksectionitem>
+		    	</apex:repeat>
+				<apex:outputPanel rendered="{!If(conflictList.size > 0,true,false)}" id="btnBlock" layout="block" styleClass="pagination">
+					<apex:commandbutton value="First" action="{!First}" reRender="conflictBlock,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+					<apex:commandbutton value="Previous" action="{!Previous}" reRender="conflictBlock,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+					<apex:outputText value="{!paginationStr}" styleClass="paginationEle"/>
+					<apex:commandbutton value="Next" action="{!Next}" reRender="conflictBlock,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+					<apex:commandbutton value="Last" action="{!Last}" reRender="conflictBlock,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+				</apex:outputPanel>
+			</apex:pageBlocksection>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

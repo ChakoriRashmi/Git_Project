@@ -1,0 +1,18 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false" standardStylesheets="false" >
+<!-- <apex:stylesheet value="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-ltng.css"/> -->
+<apex:stylesheet value="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-vf.css"/>
+<html>
+<body>
+<apex:form >
+ <div class="sld">
+      
+  <apex:outputLabel value="Name" Styleclass="slds-form-element__label" style="font-weight:8000"/>
+     <apex:inputfield value="{!Account.Name}" Styleclass="slds-input" style="width:20%" taborderhint="3" />
+     <apex:inputField value="{!Account.Rich__c}" taborderhint="2"/>
+     <apex:inputField value="{!Account.Description}" taborderhint="1"/>
+     <apex:outputField value="{!Account.Owner}" html-tabindex="50"/>
+</div>
+ </apex:form>
+ </body>
+ </html>
+</apex:page>

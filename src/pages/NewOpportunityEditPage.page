@@ -1,0 +1,26 @@
+<apex:page sidebar="false" showHeader="false" controller="OpptySiteController">
+  <apex:form >
+      <apex:pageBlock >
+    <apex:pageBlockSection >
+        Opportunity Edit<br/>
+        <font Size="5px">New Opportunity</font>
+    </apex:pageBlockSection>
+</apex:pageBlock>
+
+<apex:pageBlock >    
+    <apex:pageBlockSection >
+        <font Size="5px">Opportunity Edit </font>
+        <apex:outPutpanel >
+            <apex:commandButton value="Save"/> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <apex:commandButton value="Cancel" action="{!backToList}"/>
+        </apex:outPutpanel>
+    </apex:pageBlockSection>    
+</apex:pageBlock>
+
+<apex:pageBlock >
+    <apex:pageBlockSection >
+        
+    </apex:pageBlockSection>
+</apex:pageBlock>       
+</apex:form>
+</apex:page>

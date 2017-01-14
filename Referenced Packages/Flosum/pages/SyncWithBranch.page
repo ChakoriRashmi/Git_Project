@@ -1,0 +1,132 @@
+<apex:page standardController="Flosum__Branch__c" extensions="Flosum.SyncWithBranchController" sidebar="false" action="{!syncAction}">
+	<style>
+		.pagination { 
+			padding: 1%; 
+		} 
+		div .pagination { 
+			text-align: center; 
+		} 
+		td .dataCell label { 
+			font-weight: normal; 
+		} 
+		span.paginationEle { 
+			margin-left: 4px; 
+		} 
+		.pagination input { 
+			margin-left: 4px; 
+		} 
+		hr.pBlockDescription {
+		    margin-top: 0%;
+		    border-bottom: 1px solid #DBDBDB;
+		}
+		span.duplicateHeaderCell{
+			margin-left: 2%;
+		}
+		th.flosumHideTableHeaderRow {
+		    display: none;
+		}
+		a.comparisonLinkCls {
+		    margin-left: 2%;
+		    text-decoration: underline;
+		}
+	</style>
+	<c:Wait />
+	<apex:form >
+		<apex:pagemessages id="msg"/>
+		<apex:pageblock title="Sync With Branch" id="toPatch" rendered="{!branch.Id != null}">
+            <apex:pageBlockSection columns="1" id="transfertopatch">
+            	<apex:pageBlockSectionItem >
+            		<apex:outputLabel value="{!$ObjectType.Flosum__Branch__c.fields.Name.Label}" />
+            		<apex:outputField value="{!Flosum__Branch__c.Name}"/>
+            	</apex:pageBlockSectionItem>
+            	<apex:pageBlockSectionItem >
+            		<apex:outputLabel value="{!$ObjectType.Flosum__Branch__c.fields.Flosum__Branch_Name__c.Label}" />
+            		<apex:outputField value="{!Flosum__Branch__c.Flosum__Branch_Name__c}"/>
+            	</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Patch" />
+                    <apex:selectList size="1" value="{!selectedPatch}">
+                        <apex:selectOptions value="{!patchOptions}"/>
+                        <apex:actionSupport event="onchange" reRender="toPatch,msg" oncomplete="hide();" onsubmit="show();"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!If(selectedPatch == null || selectedPatch == '',true,false)}">
+                    <apex:outputLabel value="Patch Name" />
+                    <apex:inputText value="{!patchName}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Transfer To Patch" action="{!transferToPatch}" oncomplete="hide();" rerender="msg" onclick="show();"/>
+            </apex:pageBlockButtons>
+        </apex:pageblock>
+        <apex:outputPanel id="form1" rendered="{!branch.Id != null}">
+	        <apex:pageblock title="Components that have conflicts" id="conflictBlock">
+	        	<p>If component is in branch, and the component has been updated in repository since the branch has been created, then it is a conflict.</p>
+				<br/><hr class="pBlockDescription"/>
+				<apex:actionFunction action="{!refreshStats}" onComplete="hide();" reRender="conflictBlock,msg" name="changeItem">
+					<apex:param assignTo="{!compId}" value="" name="componentHistoryId"/>
+					<apex:param assignTo="{!compKey}" value="" name="componentKey"/>
+				</apex:actionFunction>
+				<apex:pageblocksection columns="1">
+		        	<apex:repeat value="{!conflictList}" var="item" rendered="{!If(conflictList.size > 0,true,false)}">
+		        		<apex:outputPanel >
+					    	<apex:outputText value="{!item.componentName}"/>
+					    	<apex:outputText value="{!item.componentType}" styleClass="duplicateHeaderCell"/>
+					    	<apex:commandLink target="_blank" action="{!compareComponent}" value="View Comparison" rendered="{!if(item.compList.size == 3,true,false)}" styleClass="comparisonLinkCls">
+			        			<apex:param assignTo="{!branchComponentId}" value="{!item.compList[1].comp.Id}" name="newstr3"/>
+			        			<apex:param assignTo="{!repositoryComponentId}" value="{!item.compList[0].comp.Id}" name="newstr4"/>
+			        		</apex:commandLink>
+					    </apex:outputPanel>
+			        	<apex:pageblocksectionitem >
+				        	<apex:pageblockTable value="{!item.compList}" var="ditem">
+					    		<apex:column headerValue="Source">
+					    			<apex:outputPanel rendered="{!ditem.checked}">
+					    				<input type="radio" name="{!item.componentType+'#'+item.componentName}" checked="checked" onChange="show();changeItem('{!ditem.comp.Id}','{!item.componentType+'#'+item.componentName}');">
+					    					{!ditem.sourceName}
+					    				</input>
+					    			</apex:outputPanel>
+					    			<apex:outputPanel rendered="{!!ditem.checked}">
+					    				<input type="radio" name="{!item.componentType+'#'+item.componentName}" onChange="show();changeItem('{!ditem.comp.Id}','{!item.componentType+'#'+item.componentName}');">
+					    					{!ditem.sourceName}
+					    				</input>
+					    			</apex:outputPanel>
+					    		</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Version}">{!ditem.comp.Flosum__Version__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Developer}">{!ditem.comp.Flosum__Last_Updated_By__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Changed_On}">{!ditem.comp.Flosum__Last_Modified_Date__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Committed_By}">{!ditem.comp.Flosum__Last_Modified_By__c}</apex:column>
+					    		<apex:column headerValue="{!$Label.flosum__Committed_On}">{!ditem.comp.Flosum__Committed_On__c}</apex:column>
+					    	</apex:pageblockTable>
+				        </apex:pageblocksectionitem>
+			    	</apex:repeat>
+			    	
+					<apex:outputPanel rendered="{!If(conflictList.size > 0,true,false)}" id="btnBlock" layout="block" styleClass="pagination">
+						<apex:commandbutton value="First" action="{!First}" reRender="conflictBlock,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+						<apex:commandbutton value="Previous" action="{!Previous}" reRender="conflictBlock,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+	<!-- 					<apex:outputText value="{!paginationStr}" styleClass="paginationEle"/> -->
+						<apex:commandbutton value="Next" action="{!Next}" reRender="conflictBlock,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+						<apex:commandbutton value="Last" action="{!Last}" reRender="conflictBlock,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+					</apex:outputPanel>
+		        	<apex:outputText value="No records to display." rendered="{!if(conflictList.size == 0,true,false)}"/>
+	        	</apex:pageblocksection>
+			</apex:pageblock>
+			<apex:pageblock title="Components that are safe">
+				<p>The following components have been repository since this branch was created.</p>
+				<br/><hr class="pBlockDescription"/>
+				<apex:pageblocktable value="{!newCompList}" var="item">
+					<apex:column headerValue="{!$Label.flosum__Component_Name}" value="{!item.Flosum__Component_Name__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Component_Type}" value="{!item.Flosum__Component_Type__c}" />
+					<apex:column headerValue="{!$Label.flosum__Developer}" value="{!item.Flosum__Last_Updated_By__c}" />
+			        <apex:column headerValue="{!$Label.flosum__Changed_On}" value="{!item.Flosum__Last_Modified_Date__c}"/>
+				</apex:pageblocktable>
+				<apex:outputPanel rendered="{!if(newCompList.size > 0,true,false)}" layout="block" styleClass="pagination">
+						<apex:commandbutton value="First" onClick="show();" action="{!oneSectionFirst}" disabled="{!IsSafeToMergePrev}" rerender="msg,form1" oncomplete="hide();"/>
+						<apex:commandbutton value="Previous" onClick="show();" action="{!oneSectionPrev}" disabled="{!IsSafeToMergePrev}" rerender="msg,form1" oncomplete="hide();"/>
+						<apex:commandbutton value="Next" onClick="show();" action="{!oneSectionNext}" disabled="{!IsSafeToMergeNext}" rerender="msg,form1" oncomplete="hide();"/>
+						<apex:commandbutton value="Last" onClick="show();" action="{!oneSectionLast}" disabled="{!IsSafeToMergeNext}" rerender="msg,form1" oncomplete="hide();"/>
+				</apex:outputPanel>
+				<apex:outputText value="No records to display." rendered="{!if(newCompList.size == 0,true,false)}"/>
+			</apex:pageblock>
+		</apex:outputPanel>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,143 @@
+<apex:page standardController="Contact" extensions="BaseballCardController" sidebar="false" showheader="false">
+<html lang="en">
+<head>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+      <div class="panel panel-primary" style="border:1px solid #0A12A7;margin-top:10px">
+            <div class="panel-heading" style="background:#0A12A7;">
+              &lt;  <a href="" style="color:#fff;text-decoration:underline;cursor:pointer">Back to Results</a>
+            </div>
+
+            <div class="panel-body">
+                
+                <div class="row">
+                    <div class="col-sm-6 col-md-5" style="border-right:2px solid #ddd">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div style="height: 150px;padding-left: 10px;">
+                                
+                                <apex:image value="{!Contact.Image__c}" style="position: absolute;z-index: 1;" Styleclass="img-circle" width="160" height="160" rendered="{!If (Contact.Image__c!= NULL ,true,false)}"/>
+                                      <!-- <img style="position: absolute;z-index: 1;" src="/resource/1479377356000/DocLogo" class="img-circle" alt="Cinque Terre" width="160" height="160"/> -->
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <br/>
+                                <div style="width:100%;height:40px; background:#6F6F6F;">
+                                     <center><p style="font-size:18px;line-height:40px;color:#fff;">{!Contact.FirstName} {!Contact.LastName}</p></center>
+                                </div>
+                                <center>
+                                    <p>Cardiology <br/>
+                                    Employed <br/>
+                                    Denver Medical Group <br/>
+                                    </p>
+                                </center>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="col-sm-6 col-md-7" style="padding-left:20px">
+                        <h3> <center>Provider Status </center></h3>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-4">
+                                
+                                <div style="width:100%;height:35px; background:#0A1AA2;">
+                                     <center> <p style="line-height:35px;color:#fff;"> <i style="color:#029538"  class="fa fa-circle" aria-hidden="true"></i>  &nbsp;&nbsp; Referral Management </p></center>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div style="width:100%;height:35px; background:#0A1AA2;">
+                                     <center> <p style="line-height:35px;color:#fff;"><i  style="color:#029538"  class="fa fa-circle" aria-hidden="true"></i> &nbsp;&nbsp;Quality </p></center>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div style="width:100%;height:35px; background:#0A1AA2;">
+                                     <center> <p style="line-height:35px;color:#fff;"><i style="color:#FDFB59" class="fa fa-circle" aria-hidden="true"></i>  &nbsp;&nbsp; Utilization </p></center>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Sites</a>
+                            
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Practice</a>
+                            
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Phone</a>
+                            
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Email</a>
+                            
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Board Certifications</a>
+                            
+                                <a href="#" style="color:#747474;text-decoration:underline;margin-right:50px"> Education</a>
+                            </div>
+                        </div>  
+                    </div>
+                </div>
+                
+                <br/>
+                
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <div class="panel panel-primary" style="border:1px solid #039538;">
+                            <div class="panel-heading" style="background:#039538;">
+                            Program Participant
+                            </div>
+
+                            <div class="panel-body">
+                                <br/><br/><br/><br/>
+                            </div>
+                        </div>  
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="panel panel-primary" style="border:1px solid #039538;">
+                            <div class="panel-heading" style="background:#039538;">
+                            Program Eligibility
+                            </div>
+
+                            <div class="panel-body">
+                                <br/><br/><br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4">
+                        <div class="panel panel-primary" style="border:1px solid #039538;">
+                            <div class="panel-heading" style="background:#039538;">
+                            Payer Enrollment Status
+                            </div>
+
+                            <div class="panel-body">
+                                <br/><br/><br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="panel panel-primary" style="border:1px solid #039538;">
+                            <div class="panel-heading" style="background:#039538;">
+                            Referral Management as of &nbsp;<apex:outputText value="{0,date,MM'/'dd'/'yyyy}"><apex:param value="{!today()}"/></apex:outputText>
+                            </div>
+
+                            <div class="panel-body">
+                                <br/><br/><br/><br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+
+</div>
+
+</body>
+</html>
+</apex:page>

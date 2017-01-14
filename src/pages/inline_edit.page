@@ -1,0 +1,17 @@
+<apex:page standardController="Case" recordSetVar="cs">
+    <apex:form >
+        <apex:pageBlock >
+                    <apex:commandButton action="{!quickSave}" value="SAVE"/>
+
+            <apex:pageBlockTable value="{!cs}" var="c">
+                <apex:column value="{!c.Type}"/>
+                <apex:column value="{!c.CaseNumber}"/>
+                <apex:column value="{!c.Account.name}"/>
+               <apex:column value="{!c.Origin}"/>
+            <apex:inlineEditSupport />
+
+            </apex:pageBlockTable>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

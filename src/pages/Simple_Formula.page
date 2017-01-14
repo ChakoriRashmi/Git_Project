@@ -1,0 +1,12 @@
+<apex:page standardController="Account">
+
+
+<apex:form >
+<h7>Hello  {!$User.LastName}<br/> you have to pass in test</h7>
+<p>Date {!today()}</p>
+<p>year {!YEAR(today())}</p>
+<p>Salesforce is an easy??{!Contains(' Salesforce is an easy??','--')}</p>
+<apex:inputField value="{!Account.name}"/>
+ 
+</apex:form>
+</apex:page>

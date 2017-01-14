@@ -1,0 +1,13 @@
+<apex:page controller="SOQL_cont">
+  <apex:form >
+   <apex:pageBlock >
+   <apex:commandButton value="Offset" action="{!offset}"/>
+   <apex:commandButton value="Limit" action="{!few}"/>
+   <apex:commandButton value="All Records" action="{!Allrecords}"/>
+   <apex:commandButton value="Deleted Records" action="{!deleted}"/>
+      <apex:pageBlockTable value="{!acc}" var="ac">
+          <apex:column value="{!ac.name}" />
+      </apex:pageBlockTable>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page standardController="Quote">
+ <apex:stylesheet value="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-ltng.css"/>
+<apex:form >
+    <apex:sectionHeader title="Determination Script Edit" subtitle="{!Quote.Name}"/>
+    <apex:pageblock >
+    <div class="slds">
+        <apex:pageBlockButtons location="Bottom">
+            <apex:commandButton value="Save & Close" action="{!save}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}"/>
+        </apex:pageBlockButtons>
+        <apex:pageblockSection columns="1">
+            <apex:inputField value="{!Quote.Determination_Script__c}"  styleClass="slds-input" />
+            <apex:inputField value="{!Quote.Assignment_of_Benefits_Script__c}"/>
+            <apex:inputField value="{!Quote.ACA_Policy_Script__c}"/>
+            <apex:pageblocksectionItem >
+                <apex:outputLabel value="Aggression Script"/>
+                <apex:inputField value="{!Quote.Aggression__c}"/>
+            </apex:pageblocksectionItem>
+        </apex:pageblockSection>
+        </div>
+    </apex:pageblock>
+</apex:form>
+</apex:page>

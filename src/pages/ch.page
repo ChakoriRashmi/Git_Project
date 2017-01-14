@@ -1,0 +1,18 @@
+<apex:page standardController="Centura_Settings__c" sidebar="false" showHeader="false">
+<style>
+#right {float:right;}
+#left { float:left; }
+</style>
+ <ul>
+           <li id="left">Buildup of fluid (lymphedema) in affected limb after surgery or lymph node surgery</li>
+           <li id="left">Memory or Concentration Loss</li>
+           <li id="left">Menopausal Symptoms</li>
+           <li id="left">Change in mood or depression</li>
+           <li id="left">Sexual Symptoms</li>
+           <li id="right">Change in weight</li>
+           <li id="right">Skin Changes</li>
+           <li id="right">Fatigue</li>
+           <li id="right">Tingling/Numbness or Pain in Hands/Feet(neuropathy)</li>
+           <li id="right">Loss of appetite</li>
+        </ul>
+</apex:page>

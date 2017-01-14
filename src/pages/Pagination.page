@@ -1,0 +1,16 @@
+<apex:page controller="PageCont">
+    <apex:PageBlock >
+        <apex:form >
+        <apex:commandButton value="<<" action="{!Beginning}" reRender="block"/>
+        <apex:commandButton value="<" reRender="block"/>
+        <apex:commandButton value=">"  reRender="block"/>
+        <apex:commandButton value=">>" reRender="block"/>
+
+        
+            <apex:pageBlockTable value="{!acc}" var="ac">
+                 <apex:column value="{!ac.Name}"/>  
+                 <apex:column value="{!ac.Phone}"/>
+            </apex:pageBlockTable>
+        </apex:form>
+    </apex:PageBlock>
+</apex:page>

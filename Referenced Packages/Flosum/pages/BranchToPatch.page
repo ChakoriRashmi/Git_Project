@@ -1,0 +1,179 @@
+<apex:page standardController="Flosum__Branch__c" extensions="Flosum.BranchToPatchExtension" sidebar="false">
+	<style>
+		div .pagination {
+			text-align: center;
+		}
+		span.paginationEle {
+		margin-left: 4px;
+		}
+		.pagination input {
+		margin-left: 4px;
+		}
+	</style>
+	<c:Wait />
+	<apex:form >
+		<apex:pagemessages id="msg"/>
+		<apex:pageblock title="Transfer To Patch" id="toPatch" rendered="{!branchId != null}">
+			<apex:pageBlockButtons >
+                <apex:commandButton value="Transfer To Patch" action="{!transferToPatch}" oncomplete="hide();" rerender="msg" onclick="show();"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1" id="transfertopatch">
+            	<apex:pageBlockSectionItem >
+            		<apex:outputLabel value="{!$ObjectType.Flosum__Branch__c.fields.Flosum__Branch_Name__c.Label}" />
+            		<apex:outputField value="{!branch.Flosum__Branch_Name__c}"/>
+            	</apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Patch" />
+                    <apex:selectList size="1" value="{!selectedPatch}">
+                        <apex:selectOptions value="{!patchOptions}"/>
+                        <apex:actionSupport event="onchange" reRender="toPatch,msg" oncomplete="hide();" onsubmit="show();"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!If(selectedPatch == null || selectedPatch == '',true,false)}">
+                    <apex:outputLabel value="Patch Name" />
+                    <apex:inputText value="{!patchName}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+            		<apex:outputLabel value="{!$Label.flosum__Component_Type}" />
+            		<apex:selectList label="{!$Label.flosum__Component_Type}" size="1" value="{!selectedCompType}" >
+		                <apex:selectOptions value="{!branchTypeOptions}" />
+		                <apex:actionSupport event="onchange"  reRender="toPatch,msg" action="{!defaultPagination}" oncomplete="hide();" onsubmit="show();"/> 
+		            </apex:selectList>
+            	</apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" id="tb">
+            	<script>
+					$( document ).ready(function() {
+					    checkUnCheck();
+					});
+				</script>
+            	<apex:pageBlockTable value="{!branchComplist}" var="item">
+            		<apex:column headervalue="Select">
+						<apex:facet name="header">
+							<input type="checkbox" onclick="checkItemAll(this);" class="psli" >&nbsp;</input>
+						</apex:facet>
+						<apex:inputCheckbox value="{!item.checkStatus}" styleclass="sli" onClick="checkUnCheck();"/>
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Component_Name__c',If(Order == 'ASC',$Label.flosum__Component_Name+' ▲',$Label.flosum__Component_Name+' ▼') ,$Label.flosum__Component_Name)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Component_Name__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!item.comp.Flosum__Component_Name__c}" />
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Component_Type__c',If(Order == 'ASC',$Label.flosum__Component_Type+' ▲',$Label.flosum__Component_Type+' ▼') ,$Label.flosum__Component_Type)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Component_Type__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!item.comp.Flosum__Component_Type__c}" />
+					</apex:column>
+					<apex:column >
+						<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Version__c',If(Order == 'ASC',$Label.flosum__Version+' ▲',$Label.flosum__Version+' ▼') ,$Label.flosum__Version)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Version__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+			            <apex:outputText value="{!item.comp.Flosum__Version__c}" />
+		            </apex:column>
+		            <apex:column >
+		        		<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Last_Updated_By__c',If(Order == 'ASC',$Label.flosum__Developer+' ▲',$Label.flosum__Developer+' ▼') ,$Label.flosum__Developer)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Last_Updated_By__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!item.comp.Flosum__Last_Updated_By__c}" />
+					</apex:column>
+					<apex:column >
+		        		<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Last_Modified_Date__c',If(Order == 'ASC',$Label.flosum__Changed_On+' ▲',$Label.flosum__Changed_On+' ▼') ,$Label.flosum__Changed_On)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Last_Modified_Date__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+						<apex:outputText value="{!item.comp.Flosum__Last_Modified_Date__c}" />
+					</apex:column>
+		            <apex:column >
+		        		<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Last_Modified_By__c',If(Order == 'ASC',$Label.flosum__Committed_By+' ▲',$Label.flosum__Committed_By+' ▼') ,$Label.flosum__Committed_By)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Last_Modified_By__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+		        		<apex:outputText value="{!item.comp.Flosum__Last_Modified_By__c}" />
+		        	</apex:column>
+		        	<apex:column >
+		        		<apex:facet name="header">
+							<apex:commandLink value="{!If(OrderByFieldName == 'Committed_On__c',If(Order == 'ASC',$Label.flosum__Committed_On+' ▲',$Label.flosum__Committed_On+' ▼') ,$Label.flosum__Committed_On)}" action="{!orderByComponents}" onClick="show();" onComplete="hide();" reRender="tb,msg">
+								<apex:param assignTo="{!TempOrderByFieldName}" value="Committed_On__c" name="OrderByFieldName"/>
+							</apex:commandLink>
+						</apex:facet>
+		        		<apex:outputText value="{!item.comp.Flosum__Committed_On__c}" />
+		        	</apex:column>
+				</apex:pageBlockTable>
+		        <apex:outputPanel rendered="{!if(branchComplist.size > 0,true,false)}" layout="block" styleClass="pagination">
+						<apex:commandbutton value="First" action="{!FirstPage}" reRender="tb,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+						<apex:commandbutton value="Previous" action="{!previous}" reRender="tb,msg" disabled="{!prev}" onClick="show();" onComplete="hide();"/>
+						<apex:outputText value="{!paginationStr}" styleClass="paginationEle"/>
+						<apex:commandbutton value="Next" action="{!next}" reRender="tb,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+						<apex:commandbutton value="Last" action="{!LastPage}" reRender="tb,msg" disabled="{!nxt}" onClick="show();" onComplete="hide();"/>
+				</apex:outputPanel>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+	</apex:form>
+	<script>
+		function checkItemAll(ele) {
+			var checkboxes = document.getElementsByClassName('sli');
+		     if (ele.checked) {
+		         for (var i = 0; i < checkboxes.length; i++) {
+		             if (checkboxes[i].type == 'checkbox') {
+		                 checkboxes[i].checked = true;
+		             }
+		         }
+		     } else {
+		         for (var i = 0; i < checkboxes.length; i++) {
+		             if (checkboxes[i].type == 'checkbox') {
+		                 checkboxes[i].checked = false;
+		             }
+		         }
+		     }
+		}
+		
+		function checkUnCheck()
+		{	
+			var checkboxes = document.getElementsByClassName('sli');
+			if(checkboxes != undefined && checkboxes.length > 0)
+			{
+				var allUnChecked = true;
+				var allChecked = true;
+				for(var i = 0; i < checkboxes.length; i++) 
+		        {
+					if(checkboxes[i].type == 'checkbox' && checkboxes[i].checked) 
+		            {
+			        	allUnChecked = false;
+			        }
+		            else if(checkboxes[i].type == 'checkbox' && !checkboxes[i].checked)
+		            {
+		            	allChecked = false;
+		            }
+		        }
+		        if(allChecked)
+		        {
+		        	var parentCheckboxes = document.getElementsByClassName('psli');
+		        	if(parentCheckboxes != undefined && parentCheckboxes.length > 0)
+		        	{
+		        		parentCheckboxes[0].checked = true;
+		        	}
+		        }
+		        else if(allUnChecked || (!allUnChecked && !allChecked))
+		        {
+		        	var parentCheckboxes = document.getElementsByClassName('psli');
+		        	if(parentCheckboxes != undefined && parentCheckboxes.length > 0)
+		        	{
+		        		parentCheckboxes[0].checked = false;
+		        	}
+		        }
+		    }
+		}
+	</script>
+</apex:page>

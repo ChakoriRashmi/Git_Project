@@ -1,0 +1,5 @@
+<apex:page sidebar="false" showHeader="false" controller="OpptySiteController">
+<apex:form >
+<apex:commandButton Value="Search Salesforce" action="{!SearchSalesforce}"/>
+</apex:form>
+</apex:page>

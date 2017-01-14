@@ -1,0 +1,15 @@
+<apex:page controller="button">
+<apex:form >
+    <apex:pageBlock title="List of Accounts">
+    <apex:commandButton value="Show All" action="{!showall}" reRender="mytable"/>
+        <apex:commandButton value="Show Only 10 records" action="{!showinlimit}" reRender="mytable"/>
+        <apex:commandButton value="Show in Ascending Order" action="{!showinascendingorder}" reRender="mytable" />
+        <apex:pageBlockTable value="{!method}" var="ac" id="mytable">
+            <apex:column value="{!ac.name}"/>
+            <apex:column value="{!ac.type}"/>
+            <apex:column value="{!ac.phone}"/>
+            <apex:column value="{!ac.Industry}"/>
+        </apex:pageBlockTable>
+       </apex:pageBlock>
+        </apex:form>
+</apex:page>

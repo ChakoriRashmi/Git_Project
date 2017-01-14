@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LiveChatDeployment xmlns="http://soap.sforce.com/2006/04/metadata">
+    <displayQueuePosition>false</displayQueuePosition>
+    <domainWhiteList>
+        <domain>hiiiiiiiiiiii</domain>
+    </domainWhiteList>
+    <enablePrechatApi>true</enablePrechatApi>
+    <enableTranscriptSave>false</enableTranscriptSave>
+    <label>Deploy1</label>
+    <windowTitle>Chat Window</windowTitle>
+</LiveChatDeployment>

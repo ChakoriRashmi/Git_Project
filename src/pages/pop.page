@@ -1,0 +1,14 @@
+<apex:page sidebar="true">
+     <script type="text/javascript">
+function openPopUpWindow(){     
+
+      window.open("/apex/upload");
+}
+</script>
+    <apex:form >
+   
+        <apex:commandButton onclick="openPopUpWindow();return false;" value="event upload"/>
+     
+      </apex:form>
+ 
+      </apex:page>

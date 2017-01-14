@@ -1,0 +1,18 @@
+<apex:page standardController="Account" recordSetVar="act">
+ <apex:form >
+     <apex:pageBlock >
+     <apex:pageBlockSection >
+         <apex:pageblockTable value="{!act}" var="ac" >
+             <apex:column >
+             <apex:commandlink value="{!ac.name}" rerender="det" >
+             <apex:param name="para" value="{!ac.ID}"/>
+             </apex:commandLink>
+             </apex:column>
+         </apex:pageblockTable>
+    <apex:pageBlock id="det">
+             <apex:detail subject="{!$CurrentPage.Parameters.para}" />
+      </apex:pageBlock>   
+         </apex:pageBlockSection>
+     </apex:pageBlock>
+ </apex:form>
+</apex:page>

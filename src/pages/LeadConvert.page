@@ -1,0 +1,9 @@
+<apex:page standardController="lead" cache="true" action="{!autorun}" extensions="leadController" >
+<br/><br/>
+<apex:messages style="color:red; font-weight:bold; text-align:center;"/>
+<apex:form >
+<center>
+<apex:commandLink value="Redirect to Lead" style="color:blue; font-weight:bold;" action="{!RedirecttoLead}"/>
+</center>
+</apex:form>
+</apex:page>

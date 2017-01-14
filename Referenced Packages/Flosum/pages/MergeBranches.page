@@ -1,0 +1,112 @@
+<apex:page standardController="Flosum__Branch__c" extensions="Flosum.MergeBranchesController" sidebar="false">
+	<style>
+		.pagination { 
+			padding: 1%; 
+		} 
+		div .pagination { 
+			text-align: center; 
+		}
+		span.paginationEle { 
+			margin-left: 4px; 
+		} 
+		.pagination input { 
+			margin-left: 4px; 
+		} 
+		hr.pBlockDescription {
+		    margin-top: 0%;
+		    border-bottom: 1px solid #DBDBDB;
+		}
+	</style>
+	<c:Wait />
+	<apex:sectionHeader title="Merge Branch"/>
+	<apex:form id="allCompForm">
+		<apex:actionfunction name="CallFirst" action="{!oneSectionFirst}" rerender="allCompForm" oncomplete="hide();">
+			<apex:param assignTo="{!section}" value="" name="newstr"/>
+		</apex:actionfunction>
+		<apex:actionfunction name="CallPrevious" action="{!oneSectionPrev}" rerender="allCompForm" oncomplete="hide();">
+			<apex:param assignTo="{!section}" value="" name="newstr"/>
+		</apex:actionfunction>
+		<apex:actionfunction name="CallNext" action="{!oneSectionNext}" rerender="allCompForm" oncomplete="hide();">
+			<apex:param assignTo="{!section}" value="" name="newstr"/>
+		</apex:actionfunction>
+		<apex:actionfunction name="CallLast" action="{!oneSectionLast}" rerender="allCompForm" oncomplete="hide();">
+			<apex:param assignTo="{!section}" value="" name="newstr"/>
+		</apex:actionfunction>
+		<apex:pagemessages id="msg"/>
+		<apex:pageBlock id="branchblock" rendered="{!!isProcessDone}">
+			<apex:pageBlockSection columns="1">
+				<apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Flosum__Branch__c.fields.Name.label}" />
+                    <apex:outputField value="{!Flosum__Branch__c.Name}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="{!$ObjectType.Flosum__Branch__c.fields.Flosum__Branch_Name__c.label}" />
+                    <apex:outputField value="{!Flosum__Branch__c.Flosum__Branch_Name__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Merge To Branch" />
+                    <apex:selectList size="1" value="{!selectedBranch}">
+                        <apex:selectOptions value="{!branchOptions}"/>
+                        <apex:actionSupport event="onchange" action="{!listDuplicate}" reRender="allCompForm,msg" oncomplete="hide();" onsubmit="show();"/>
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!If(selectedBranch == null || selectedBranch == '',true,false)}">
+                    <apex:outputLabel value="Branch Name" />
+                    <apex:inputText value="{!branchName}"/>
+                </apex:pageBlockSectionItem>
+           	</apex:pageBlockSection>
+			<apex:pageBlockButtons >
+				<apex:commandButton value="Merge To Branch" onClick="show();" rendered="{!If(IsExist,false,true)}" action="{!addToBranch}" reRender="msg,allCompForm" oncomplete="hide();"/>
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!!isProcessDone}">
+			<apex:pageBlock title="Following components will be moved to the branch">
+<!-- 				<p></p> -->
+<!-- 				<br/><hr class="pBlockDescription"/> -->
+				<apex:pageblocktable value="{!SafeCommitCompList}" var="item">
+					<apex:column headerValue="{!$Label.flosum__Component_Name}" value="{!item.comp.Flosum__Component_Name__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Component_Type}" value="{!item.comp.Flosum__Component_Type__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Developer}" value="{!item.comp.Flosum__Last_Updated_By__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Changed_On}" value="{!item.comp.Flosum__Last_Modified_Date__c}"/>
+		        	<apex:column headerValue="{!$Label.flosum__Committed_By}" value="{!item.comp.Flosum__Last_Modified_By__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Committed_On}" value="{!item.comp.Flosum__Committed_On__c}"/>
+<!-- 		        	<apex:column > -->
+<!-- 		        		<apex:commandLink target="_blank" action="{!compareComponent}" value="View Comparison" rendered="{!If(item.targetCompId != null && item.targetCompId != '',true,false)}"> -->
+<!-- 		        			<apex:param assignTo="{!targetComponentId}" value="{!item.targetCompId}" name="newstr"/> -->
+<!-- 		        			<apex:param assignTo="{!sourceComponentId}" value="{!item.comp.Id}" name="newstr2"/> -->
+<!-- 		        		</apex:commandLink> -->
+<!-- 		        	</apex:column> -->
+				</apex:pageblocktable>
+				<apex:outputText value="No records to display." rendered="{!if(SafeCommitCompList.size == 0,true,false)}"/>
+				<apex:outputPanel rendered="{!if(SafeCommitCompList.size > 0,true,false)}" layout="block" styleClass="pagination">
+					<apex:commandbutton value="First" onClick="show();CallFirst('safe'); return false;" disabled="{!IsSafeToMergePrev}" reRender="none"/>
+					<apex:commandbutton value="Previous" onClick="show();CallPrevious('safe'); return false;" disabled="{!IsSafeToMergePrev}" reRender="none"/>
+					<apex:commandbutton value="Next" onClick="show();CallNext('safe'); return false;" disabled="{!IsSafeToMergeNext}" reRender="none"/>
+					<apex:commandbutton value="Last" onClick="show();CallLast('safe'); return false;" disabled="{!IsSafeToMergeNext}" reRender="none"/>
+				</apex:outputPanel>
+			</apex:pageBlock>
+			<apex:pageBlock title="Components that are already exist in target branch">
+<!-- 				<p></p> -->
+<!-- 				<br/><hr class="pBlockDescription"/>			 -->
+				<apex:pageblocktable value="{!NotCommitCompList}" var="item">
+					<apex:column headerValue="{!$Label.flosum__Component_Name}" value="{!item.comp.Flosum__Component_Name__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Component_Type}" value="{!item.comp.Flosum__Component_Type__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Developer}" value="{!item.comp.Flosum__Last_Updated_By__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Changed_On}" value="{!item.comp.Flosum__Last_Modified_Date__c}"/>
+		        	<apex:column headerValue="{!$Label.flosum__Committed_By}" value="{!item.comp.Flosum__Last_Modified_By__c}" />
+		        	<apex:column headerValue="{!$Label.flosum__Committed_On}" value="{!item.comp.Flosum__Committed_On__c}"/>
+		        	<apex:column headerValue="Reason">
+		        		<apex:outputText value="{!'Same as Version '+TEXT(item.info.sameToVersion)+' in Branch: '+targetBranchName}"/>
+		        	</apex:column>
+				</apex:pageblocktable>
+				<apex:outputText value="No records to display." rendered="{!if(NotCommitCompList.size == 0,true,false)}"/>
+				<apex:outputPanel rendered="{!if(NotCommitCompList.size > 0,true,false)}" layout="block" styleClass="pagination">
+						<apex:commandbutton value="First" onClick="show();CallFirst('not'); return false;" disabled="{!IsNotToMergePrev}" reRender="none"/>
+						<apex:commandbutton value="Previous" onClick="show();CallPrevious('not'); return false;" disabled="{!IsNotToMergePrev}" reRender="none"/>
+						<apex:commandbutton value="Next" onClick="show();CallNext('not'); return false;" disabled="{!IsNotToMergeNext}" reRender="none"/>
+						<apex:commandbutton value="Last" onClick="show();CallLast('not'); return false;" disabled="{!IsNotToMergeNext}" reRender="none"/>
+				</apex:outputPanel>
+			</apex:pageBlock>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

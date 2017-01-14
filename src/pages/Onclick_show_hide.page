@@ -1,0 +1,9 @@
+<apex:page controller="onclickcont">
+<apex:form >
+    <apex:commandButton value="show" action="{!flip}"/><br/>
+    <apex:outputpanel >
+        <apex:outputText value="Hiiiiii"></apex:outputText><br/>
+        <apex:outputText value="Magic"></apex:outputText>
+    </apex:outputpanel>
+</apex:form>
+</apex:page>

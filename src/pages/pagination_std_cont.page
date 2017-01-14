@@ -1,0 +1,19 @@
+<apex:page standardController="Account" recordSetVar="accounts" extensions="actextn" >
+<apex:form >
+    <apex:pageBlock >
+    <apex:pageBlockTable value="{!acc}" var="ac">
+        <apex:column value="{!ac.name}"/>
+        <apex:column value="{!ac.type}"/>
+        <apex:column value="{!ac.phone}"/>
+
+    </apex:pageBlockTable>
+        
+    <apex:pageBlockButtons >
+        <apex:commandButton value="First" action="{!First}"/>
+        <apex:commandButton value="Last" action="{!Last}"/>
+        <apex:commandButton value="Next" action="{!Next}"/>
+        <apex:commandButton value="Previous" action="{!Previous}"/>
+    </apex:pageBlockButtons>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

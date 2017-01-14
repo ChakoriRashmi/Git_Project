@@ -1,0 +1,31 @@
+<apex:page sidebar="false" showHeader="false" controller="OpptySiteController">
+
+
+  <apex:form >
+
+<input value="Submit for Approval" class="btn" title="Submit for Approval" name="submit" onclick="if ((Modal.confirm &amp;&amp; Modal.confirm('Once you submit this record for approval, you might not be able to edit it or recall it from the approval process depending on your settings. Continue?')) || (!Modal.confirm &amp;&amp; window.confirm('Once you submit this record for approval, you might not be able to edit it or recall it from the approval process depending on your settings. Continue?'))) navigateToUrl('/p/process/Submit?retURL=%2FXXXX&amp;id=XXXXXX','DETAIL','submit');" type="button"/>
+
+      <apex:commandButton value="Search" action="{!SearchData}" reRender="{!show}"/>
+      
+      <apex:commandButton value="Search Result"  rendered="False"/>
+            
+      <apex:inputText />
+      
+      <apex:pageBlock >
+            <apex:pageBlockSection title="Accounts" collapsible="false">
+            <apex:pageBlockTable value="{!acc}" var="ac" > 
+                <apex:column headerValue="Account Name" value="{!ac.Name}"/>                                        
+                <apex:column headerValue="Phone" value="{!ac.Phone}"/> 
+              </apex:pageBlockTable>
+            </apex:pageBlockSection>
+            
+             <apex:pageBlockSection title="Contacts" collapsible="false">
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Opportunities" collapsible="false">
+            </apex:pageBlockSection>
+            
+      </apex:pageBlock>
+
+  </apex:form>
+</apex:page>

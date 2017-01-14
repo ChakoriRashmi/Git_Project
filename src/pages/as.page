@@ -1,0 +1,87 @@
+<apex:page standardController="Contact" extensions="MultipleUploadController1">
+ <apex:stylesheet value="/resource/SLDS0102/assets/styles/salesforce-lightning-design-system-ltng.css"/>
+<style type="text/css">
+.customPopup {
+    background-color: white;
+    border-radius: 5px;
+    border-color: #0066FF;
+    left: 30%;
+    padding: 10px;
+    position: absolute;
+    z-index: 9999;
+    width: 700px;
+    height: 150px;
+    
+}
+
+
+.closeButton {
+    float: right;
+}
+
+.popupBackground{
+    background-color:black;
+    opacity: 0.20;
+    filter: alpha(opacity = 20);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 9998;
+}
+</style>
+
+    <apex:form >
+    <div class="slds">
+        <apex:pageBlock >
+        <apex:outputPanel id="a" Styleclass="slds-form-element__label">
+        {!text}
+        </apex:outputPanel>
+            <apex:commandButton value="Event Upload" action="{!showPopup}" rerender="popup" status="status"/>
+                <apex:outputPanel id="popup">
+                    <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!displayPopUp}"/>
+                        <apex:outputPanel id="popInnerOutputPnl" styleClass="customPopup" layout="block" rendered="{!displayPopUp}">
+                                     <apex:pageBlock title="Upload Multiple Attachment to Object">
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Upload"  action="{!SaveAttachments}"/>
+            </apex:pageBlockButtons>
+            
+            <apex:pageMessages id="MSG"/>
+            <apex:actionFunction name="ChangeCount" action="{!ChangeCount}"/>
+            
+            <apex:pageblocksection >
+                            
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="How many files you want to upload?" Styleclass="slds-form-element__label"/>
+                    <apex:selectList onchange="ChangeCount() ;" multiselect="false" size="1" value="{!FileCount}" Styleclass="slds-input">
+                        <apex:selectOption itemLabel="--None--" itemValue="" />
+                        <apex:selectOptions value="{!filesCountList}" />
+                    </apex:selectList>
+                </apex:pageBlockSectionItem>
+            
+            </apex:pageblocksection>
+            
+            <apex:pageBlockSection title="Select Files" rendered="{!IF(FileCount != null && FileCount != '', true , false)}">
+                <apex:repeat value="{!allFileList}" var="AFL">
+                    <apex:inputfile value="{!AFL.body}" filename="{!AFL.Name}" />
+                    <br/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+                                
+                              <apex:commandButton value="X" title="Close the popup" action="{!closePopup}" styleClass="closeButton" rerender="popup,a">
+                                </apex:commandButton>
+                        </apex:outputPanel>
+                </apex:outputPanel>
+        </apex:pageBlock>
+        <apex:image value="{!Contact.Image__c}"/>
+          <img style="position: absolute;z-index: 1;" class="img-circle"  width="160" height="160"> {!Contact.Image__c} </img>
+          
+          
+         
+        </div>
+    </apex:form>
+</apex:page>

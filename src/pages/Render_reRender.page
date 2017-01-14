@@ -1,0 +1,13 @@
+<apex:page controller="RenderedControllr" sidebar="false" showHeader="false">
+ <apex:form >
+   <apex:pageBlock >
+        <apex:commandButton value="Show" action="{!Showme}"/>
+        <apex:commandButton value="Hide" action="{!hideme}"/>
+
+    
+    <apex:outputPanel rendered="{!test}"><br/>
+    Hiiiiiiiiiiiiiiiiiiiiiii
+    </apex:outputPanel>
+     </apex:pageBlock>    
+ </apex:form>
+</apex:page>

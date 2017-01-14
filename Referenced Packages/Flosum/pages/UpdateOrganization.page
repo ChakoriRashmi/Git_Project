@@ -1,0 +1,184 @@
+<apex:page doctype="HTML-5.0" standardController="Flosum__Organisation__c" extensions="Flosum.RegisterOrganizationController" sidebar="false">
+<c:Wait /> 
+<apex:includeScript value="{!URLFOR($Resource.Flosum__jsforce)}"/> 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<apex:form >
+		<apex:pageMessage summary="This page is supported with Google Chrome or Firefox browser (not with Internet Explorer)." severity="info" strength="0" />
+		<apex:pagemessages id="msg_cred"/>
+		<apex:pageblock title="Add Organizations">
+			<apex:pageBlockSection id="creds" rendered="true" columns="1"> 
+				<apex:pageBlockSectionItem >
+					<apex:outputlabel value="{!$ObjectType.Flosum__Organisation__c.fields.Name.label}" />
+					<apex:inputField value="{!Flosum__Organisation__c.Name}"/>
+			   	</apex:pageBlockSectionItem>   
+				<apex:pageBlockSectionItem >
+					<apex:outputlabel value="{!$ObjectType.Flosum__Organisation__c.fields.Flosum__Username__c.label}" />
+				    <apex:inputField value="{!Flosum__Organisation__c.Flosum__Username__c}"/>
+				</apex:pageBlockSectionItem>
+			    <apex:pageBlockSectionItem >
+					<apex:outputlabel value="Authorization Code"/>
+				    <apex:inputsecret value="{!password}" styleclass="pkp" redisplay="true"/>
+			    </apex:pageBlockSectionItem>
+			    <apex:pageBlockSectionItem >
+				    <apex:outputlabel value="{!$ObjectType.Flosum__Organisation__c.fields.Flosum__Organisation_Type__c.label}" />
+				    <apex:outputField value="{!Flosum__Organisation__c.Flosum__Organisation_Type__c}"/>
+			    </apex:pageBlockSectionItem>
+			    <apex:pageBlockSectionItem rendered="{!If(Flosum__Organisation__c.Flosum__Organisation_Type__c == 'Government cloud org',true,false)}">
+				    <apex:outputlabel value="{!$ObjectType.Flosum__Organisation__c.fields.Flosum__HostName__c.label}" />
+				    <apex:outputField value="{!Flosum__Organisation__c.Flosum__HostName__c}"/>
+			    </apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom">	    
+			    <apex:commandbutton onclick="auth(); return false;" value="Authorize" rerender="creds,msg_cred" />
+			    <apex:commandbutton action="{!cancelSave}" value="Cancel" />
+			</apex:pageBlockButtons>
+		</apex:pageblock>
+		<apex:actionfunction name="checkAndSave" action="{!updateAndSave}" rerender="creds,msg_cred" oncomplete="afterSave('{!remoteSiteSettingURL}','{!PlaceOfException}');"/>
+		<apex:actionfunction name="authorize" action="{!processLogin}" oncomplete="promptLink('{!JSENCODE(loginUrl)}');" rerender="msg"/>
+		<apex:actionfunction name="completeRegisterOrg" action="{!completeUpdateOrg}" oncomplete="hide();" rerender="msg_cred,nonevalue"/> 
+	</apex:form>
+	
+	<script>
+		var url = '{!baseUrl}';
+		var flosumsf = jsforce;
+		
+		function auth() 
+		{
+			if($(".pkp").val() == '') 
+			{
+				authorize();
+			} 
+			else 
+			{
+				show();
+				checkAndSave();
+			}
+			return false;
+		}
+		
+		function promptLink(linkUrl)
+		{
+			if(linkUrl != '')
+			{
+				prompt('Copy the following link and open in other browser or in incognito mode to get autorization code', linkUrl);
+			}
+		}
+			
+		function afterSave(remoteSiteSettingURL,placeOfEX)
+		{
+			console.log(remoteSiteSettingURL);
+			console.log(placeOfEX);
+			if(remoteSiteSettingURL != '' && (placeOfEX == 'ID' || placeOfEX == 'AUTHORIZATION'))
+			{
+				listRemoteSiteSetting(remoteSiteSettingURL,placeOfEX);
+			}
+			else
+				hide();
+		}
+		
+		function listRemoteSiteSetting(RSURL,placeOfEX)
+		{
+			var reg = /[^a-zA-Z0-9]+/g
+		    var host = RSURL;
+		    var fullName = RSURL.slice(8,RSURL.indexOf('.salesforce.com'));
+		    fullName = fullName.replace(reg,'');
+			var ExistingNames = {};
+			var selfConn = new flosumsf.Connection({ accessToken: '{!$API.Session_Id}' });
+			var queryLi = [];
+        	var query = new Object();
+        	query.folder = '';
+        	query.type = 'RemoteSiteSetting';
+        	queryLi.push(query);
+        	console.log(ExistingNames);
+        	selfConn.metadata.list(queryLi, '34.0', function(err,result){
+        		if(err) 
+            	{
+            		console.log(err);
+            	}
+            	else
+            	{
+            		if(Array.isArray(result))
+           			{
+           				for(var index in result)
+           				{
+           					if(index < result.length)
+           					{
+           						var mi = result[index];
+           						ExistingNames[mi.fullName]= mi.fullName;
+           					}
+           				}
+           			}
+           			else
+           			{
+           				ExistingNames[result.fullName]= result.fullName;
+           			}
+           			var remoteSite = new Object();
+           			remoteSite.fullName = ExistingNames[fullName] != undefined ?  getRemoteSiteName(fullName+'1',ExistingNames) : fullName;
+           			remoteSite.description = 'Metadata API Remote Site Setting for Flosum Application';
+           			remoteSite.isActive = true;
+           			remoteSite.url = host;
+           			selfConn.metadata.create('RemoteSiteSetting',remoteSite,function(err2,result2){
+           				if(err2) 
+		            	{
+		            		console.log(err2);
+		            		hide();
+		            	}
+		            	else
+		            	{
+		            		if(result2 != undefined && result2.success)
+		            		{
+		            			if(placeOfEX == 'AUTHORIZATION')
+					     		{
+					     			checkAndSave();
+					     		}
+					     		else if(placeOfEX == 'ID')
+					     		{
+					     			completeRegisterOrg();
+					     		}
+					     		else
+					     		{
+					     			hide();
+					     		}
+		            		}
+		            		else
+		            		{
+		            			console.log(JSON.stringify(result2.errors));
+		            			hide();
+		            		}
+		            	}
+           			});
+            	}
+        	});
+		}
+		
+		function getRemoteSiteName(fullName,ExistingNames)
+		{
+			if(ExistingNames[fullName] != undefined)
+			{
+				fullName = calculateName(fullName);
+				return getRemoteSiteName(fullName,ExistingNames);
+			}
+			else
+			{
+				return fullName;
+			}
+		}
+		
+		function calculateName(input)
+		{
+			var result = input;
+			var i = input.length;
+			var last = input.charAt(--i);
+			if(isNaN(last))
+			{
+				return result+'1';
+			}
+			else
+			{
+                   last = parseInt(last) + 1;
+                   result = result.slice(0,result.length - 1);
+				return result  + ''+last ;
+			}
+		}
+	</script>
+</apex:page>
