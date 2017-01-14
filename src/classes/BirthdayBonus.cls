@@ -4,6 +4,7 @@ Global class BirthdayBonus implements Database.batchable<Sobject>{
     return Database.getQueryLocator([select id,Salary__c,BirthDate__C from Account where BirthDate__c =: System.today()]);
     }
   // Check??
+  //LLLLLLLLLLL
  //>>>>>>>>>>>>>>>>>>
     public Void execute(Database.BatchableContext jobId, List<sObject> recordList){
     List<Account> accList = new List<Account>();
